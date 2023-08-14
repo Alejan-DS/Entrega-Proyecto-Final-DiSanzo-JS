@@ -1,3 +1,4 @@
+// import swal from 'sweetalert';
 //Variable que mantiene el estado visible del carrito
 let carritoVisible = false;
 
@@ -43,7 +44,8 @@ function ready(){
 }
 //Eliminamos todos los elementos del carrito y lo ocultamos
 function pagarClicked(){
-    alert("Gracias por la compra");
+    swal("Gracias por su compra", "Vuelva pronto", "success");
+    // alert("Gracias por la compra");
     //Elimino todos los elmentos del carrito
     let carritoItems = document.getElementsByClassName('carrito-items')[0];
     while (carritoItems.hasChildNodes()){
@@ -87,8 +89,8 @@ function agregarItemAlCarrito(titulo, precio, imagenSrc){
     let nombresItemsCarrito = itemsCarrito.getElementsByClassName('carrito-item-titulo');
     for(let i=0;i < nombresItemsCarrito.length;i++){
         if(nombresItemsCarrito[i].innerText==titulo){
-            alert("El item ya se encuentra en el carrito");
-            return;
+            swal("Informacion!","El item ya se encuentra en el carrito", "info");
+            // return;
         }
     }
 
@@ -197,28 +199,25 @@ function actualizarTotalCarrito(){
 }
 
 
-//*************** INICIO DE SESION********************* */
+
+//*************** INICIO DE SESION *********************
 
 const loginCuenta = document.querySelector(".login_cuenta");
-const loginIcon = document.querySelector(".login-icon"); // Usamos el querySelector para llamar con la sintaxis de css
+const loginIcon = document.querySelector(".login-icon");
 const loginContainer = document.querySelector(".login-container");
 const logoutButton = document.createElement('button');
-const buttonExit = document.querySelector(".button_exit");
 logoutButton.textContent = 'Cerrar sesión';
 // Agregamos una clase al boton de cerrar sesion para darle estilo
 logoutButton.classList.add("cerrar-sesion");
 
-let LoginFormVisible = false; // Variable para realizar un seguimiento del estado del formulario
-
 loginIcon.addEventListener("click", function () {
-  
     // Quitar los botones inciar sesion y crear cuenta
     const deleteButton1 = document.querySelector(".login-icon");
     deleteButton1.remove();
     const deleteButton2 = document.querySelector(".new_login");
     deleteButton2.remove();
 
-    // Crear y agregar el formulario de inicio de sesión dinámicamente
+// Crear y agregar el formulario de inicio de sesión 
     const loginForm = document.createElement("form");
 
     const usernameInput = document.createElement("input");
@@ -236,75 +235,42 @@ loginIcon.addEventListener("click", function () {
     loginForm.appendChild(usernameInput);
     loginForm.appendChild(passwordInput);
     loginForm.appendChild(submitButton);
-
-    // Creamos una clase para poder agregarle estilo con css
     loginForm.classList.add("login-form");
-    
-    // Agregamos un evento submit y le damos una funcion
-    // Para que nos guarde el usuario y contraseña en el localStorage
-    loginForm.addEventListener("submit", function() {
 
-      // Obtener los valores del formulario
+         // Agregamos un evento submit y le damos una funcion
+        // Para que nos guarde el usuario y contraseña en el localStorage
+    loginForm.addEventListener("submit", function (event) {
+      event.preventDefault();
+
       const username = usernameInput.value;
       const password = passwordInput.value;
 
-      // Guardar en localStorage
-      localStorage.setItem('username', username);
-      localStorage.setItem('password', password);
+      // Verificar campos no vacíos
+      if (username && password) {
+        // Guardar en localStorage
+        localStorage.setItem('username', username);
+        localStorage.setItem('password', password);
 
-      // Restablecer los campos del formulario
-      usernameInput.value = '';
-      passwordInput.value = '';
-
-      // Ocultar el formulario
-      loginContainer.removeChild(loginForm);
-      LoginFormVisible = false;
-
-      // sesión iniciada
-      const miCuenta = localStorage.getItem('username');
-      if (miCuenta) {
-        logeado(miCuenta);
+        // Ocultar el formulario
+        loginContainer.removeChild(loginForm);
+        swal("EXCELENTE!","Ingreso Correctamente", "success");
+        // Mostrar mensaje de sesión
+        mostrarSesion(username);
+      } else {
+        alert("Por favor, completa ambos campos.");
       }
-      
-  });
+    });
 
     loginContainer.appendChild(loginForm);
-
 });
 
-  // Verificar si hay una sesión iniciada al cargar la página
-  const sesionIniciada = localStorage.getItem('username');
-  if (sesionIniciada) {
-    logeado(sesionIniciada);
-    const close = document.querySelector('.button_exit')
-    close.appendChild(logoutButton);
-  }
-
-  logoutButton.addEventListener('click', function() {
-    // Borrar los datos del localStorage
-    localStorage.clear();
-
-    // Refrescar la página
-    location.reload();
-
-    // Eliminar sesión iniciada y el botón de cerrar sesión
-    const borMessage = document.querySelector('.logged-in-message');
-    loginCuenta.removeChild(borMessage);
-    loginCuenta.removeChild(logoutButton);
-  });
-  
-  function logeado(username) {
-    const loggedIn = document.createElement('p');
-    loggedIn.textContent = username;
-    buttonExit.appendChild(loggedIn);
-    const close = document.querySelector('.button_exit')
-    close.appendChild(logoutButton);
-
-    const deleteCuenta = document.querySelector(".login_cuenta");
-    deleteCuenta.remove();
-    loggedIn.classList.add("msj-activo");
-    
-  }
+function mostrarSesion(username) {
+  const loggedInMessage = document.createElement('p');
+  loggedInMessage.textContent = "¡Sesión iniciada como " + username + "!";
+  loggedInMessage.classList.add("logged-in-message");
+  loginCuenta.appendChild(loggedInMessage);
+  loginCuenta.appendChild(logoutButton);
+}
 
 
 
